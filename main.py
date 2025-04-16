@@ -141,7 +141,7 @@ class MainApp(QMainWindow):
         self.resize(1200, 700)
 
         self.viewer = Viewer3D(
-            "../3DModels/3D_printed_ICE_iphone/Scaniverse_2025_04_08_095715.obj"
+            "data/3D_printed_ICE_iphone/Scaniverse_2025_04_08_095715.obj"
         )
         self.table = PointTable()
 
