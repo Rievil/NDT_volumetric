@@ -139,10 +139,10 @@ class MainApp(QMainWindow):
         super().__init__()
         self.setWindowTitle("3D Viewer + Point Table")
         self.resize(1200, 700)
-
-        self.viewer = Viewer3D(
-            "data/3D_printed_ICE_iphone/Scaniverse_2025_04_08_095715.obj"
+        self.default_model = (
+            r"data/3D_printed_ICE_iphone/Scaniverse_2025_04_08_095715.obj"
         )
+        self.viewer = Viewer3D(self.default_model)
         self.table = PointTable()
 
         splitter = QSplitter(Qt.Horizontal)
@@ -165,6 +165,10 @@ class MainApp(QMainWindow):
         toolbar = QToolBar("Main Toolbar")
         self.addToolBar(toolbar)
 
+        open_action = QAction("\U0001f4be Open", self)
+        open_action.triggered.connect(self.open_files)
+        toolbar.addAction(open_action)
+
         save_action = QAction("\U0001f4be Save", self)
         save_action.triggered.connect(self.save_points)
         toolbar.addAction(save_action)
@@ -172,6 +176,19 @@ class MainApp(QMainWindow):
         load_action = QAction("\U0001f4c2 Load", self)
         load_action.triggered.connect(self.load_points)
         toolbar.addAction(load_action)
+
+    def open_files(self):
+        path, _ = QFileDialog.getOpenFileName(
+            self, "Open Model", "", "OBJ files (*.obj);;All Files (*)"
+        )
+        if not path:
+            return
+        self.viewer.mesh_path = path
+        self.viewer.mesh = Mesh(path).normalize()
+        self.viewer.plotter.clear()
+        self.viewer.plotter.show(self.viewer.mesh, resetcam=True)
+        self.table.table.setRowCount(0)
+        self.table.data = []
 
     def save_points(self):
         path, _ = QFileDialog.getSaveFileName(
